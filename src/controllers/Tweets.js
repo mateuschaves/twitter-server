@@ -9,7 +9,7 @@ module.exports = {
   },
 
   async store(req, res) {
-    let emotion = { score: 1, emotion: "null" };
+    let emotion = { score: -1, emotion: "null" };
     const tags = ["sadness", "joy", "fear", "anger"];
 
     const nlu = new NaturalLanguageUnderstandingV1({
@@ -41,6 +41,7 @@ module.exports = {
             req.body.emotion = emotion;
           }
         }
+        console.log(emotion);
         const tweet = await Tweet.create(req.body);
         req.io.emit("tweet", tweet);
         return res.json(tweet);
