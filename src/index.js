@@ -17,7 +17,9 @@ const io = require("socket.io")(server);
 const port = process.env.PORT || 5000;
 
 mongoose.connect(
-  "mongodb://goweek:goweek123@ds155213.mlab.com:55213/goweek-4",
+  `mongodb+srv://mathchaves:${
+    process.env.MONGODB_PASSWORD
+  }@cluster0-wlooi.mongodb.net/test?retryWrites=true&w=majority`,
   { useNewUrlParser: true }
 );
 
