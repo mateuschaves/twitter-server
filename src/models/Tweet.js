@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const TweetSchema = new mongoose.Schema({
   author: String,
   content: String,
+  sex: String,
+  age: Number,
   emotion: {
     score: Number,
     emotion: String
