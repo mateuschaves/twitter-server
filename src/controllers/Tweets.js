@@ -68,6 +68,10 @@ module.exports = {
                   return res.json(tweet);
                 })
                 .catch(async _ => {
+                  res.setHeader(
+                    "Access-Control-Allow-Origin",
+                    "http://localhost:3000"
+                  );
                   const tweet = await Tweet.create(req.body);
                   req.io.emit("tweet", tweet);
                   return res.json(tweet);
@@ -111,6 +115,10 @@ module.exports = {
               return res.json(tweet);
             })
             .catch(async _ => {
+              res.setHeader(
+                "Access-Control-Allow-Origin",
+                "http://localhost:3000"
+              );
               const tweet = await Tweet.create(req.body);
               req.io.emit("tweet", tweet);
               return res.json(tweet);
