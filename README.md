@@ -12,12 +12,18 @@ A simple Twitter API with IBM Natural Language Understanding developed for an in
  # Run
  
  Clone the repository
+ 
+ 
  `git clone https://github.com/mateuschaves/TwitterServer.git`
  
  Change to project directory
+ 
+ 
  `cd TwitterServer`
  
  Install project dependencies
+ 
+ 
  `yarn`
  or
  `npm install`
@@ -26,6 +32,8 @@ A simple Twitter API with IBM Natural Language Understanding developed for an in
  Set the variables on `.env` file
  
  Start the project
+ 
+ 
  `yarn start`
  or
  `npm start`
