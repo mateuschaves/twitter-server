@@ -22,6 +22,9 @@ A simple Twitter API with IBM Natural Language Understanding developed for an in
  or
  `npm install`
  
+ 
+ Set the variables on `.env` file
+ 
  Start the project
  `yarn start`
  or
