@@ -37,3 +37,12 @@ A simple Twitter API with IBM Natural Language Understanding developed for an in
  `yarn start`
  or
  `npm start`
+ 
+ 
+ # Clients
+ 
+ This application have mobile and web clients, both wrote using javascript.
+ 
+ [Mobile App - React Native](https://github.com/mateuschaves/goweek-twitter/tree/master/mobile)
+ [Web App - ReactJS](https://github.com/mateuschaves/TwitterWeb)
+ 
