@@ -1,6 +1,6 @@
 const Tweet = require("../models/Tweet");
-const NaturalLanguageUnderstandingV1 = require("ibm-watson/natural-language-understanding/v1.js");
-const LanguageTranslatorV3 = require("ibm-watson/language-translator/v3");
+
+const Nlu = require('../services/nlu');
 
 module.exports = {
   async index(_, res) {
@@ -12,121 +12,30 @@ module.exports = {
   async store(req, res) {
     let emotion = { score: -1, emotion: "null" };
     const tags = ["sadness", "joy", "fear", "anger"];
-
-    const languageTranslator = new LanguageTranslatorV3({
-      iam_apikey: process.env.TRANSLATOR_IAM_APIKEY,
-      url: process.env.TRANSLATOR_URL,
-      version: "2018-04-05"
-    });
-
-    languageTranslator
-      .identify({
-        text: req.body.content
-      })
-      .then(({ languages }) => {
-        if (languages[0].language != "en") {
-          languageTranslator
-            .translate({
-              text: req.body.content,
-              source: languages[0].language,
-              target: "en"
-            })
-            .then(({ translations }) => {
-              req.body.content = translations[0].translation;
-              const nlu = new NaturalLanguageUnderstandingV1({
-                iam_apikey:
-                  process.env.NATURAL_LANGUAGE_UNDERSTANDING_IAM_APIKEY,
-                version: "2018-04-05",
-                url: process.env.NATURAL_LANGUAGE_UNDERSTANDING_URL
-              });
-              nlu
-                .analyze({
-                  html: req.body.content,
-                  features: {
-                    emotion: {}
-                  }
-                })
-                .then(async result => {
-                  const {
-                    emotion: {
-                      document: {
-                        emotion: { sadness, joy, fear, anger }
-                      }
-                    }
-                  } = result;
-
-                  const scores = [sadness, joy, fear, anger];
-                  for (let i = 0; i < 4; i++) {
-                    if (scores[i] > emotion.score) {
-                      emotion.score = scores[i];
-                      emotion.emotion = tags[i];
-                      req.body.emotion = emotion;
-                    }
-                  }
-                  const tweet = await Tweet.create(req.body);
-                  req.io.emit("tweet", tweet);
-                  return res.json(tweet);
-                })
-                .catch(async _ => {
-                  res.setHeader(
-                    "Access-Control-Allow-Origin",
-                    "http://localhost:3000"
-                  );
-                  const tweet = await Tweet.create(req.body);
-                  req.io.emit("tweet", tweet);
-                  return res.json(tweet);
-                });
-            })
-            .catch(err => {
-              console.log("error:", err);
-            });
-        } else {
-          const nlu = new NaturalLanguageUnderstandingV1({
-            iam_apikey: process.env.NATURAL_LANGUAGE_UNDERSTANDING_IAM_APIKEY,
-            version: "2018-04-05",
-            url: process.env.NATURAL_LANGUAGE_UNDERSTANDING_URL
-          });
-          nlu
-            .analyze({
-              html: req.body.content,
-              features: {
-                emotion: {}
-              }
-            })
-            .then(async result => {
-              const {
-                emotion: {
-                  document: {
-                    emotion: { sadness, joy, fear, anger }
-                  }
-                }
-              } = result;
-
-              const scores = [sadness, joy, fear, anger];
-              for (let i = 0; i < 4; i++) {
-                if (scores[i] > emotion.score) {
-                  emotion.score = scores[i];
-                  emotion.emotion = tags[i];
-                  req.body.emotion = emotion;
-                }
-              }
-              const tweet = await Tweet.create(req.body);
-              req.io.emit("tweet", tweet);
-              return res.json(tweet);
-            })
-            .catch(async _ => {
-              res.setHeader(
-                "Access-Control-Allow-Origin",
-                "http://localhost:3000"
-              );
-              const tweet = await Tweet.create(req.body);
-              req.io.emit("tweet", tweet);
-              return res.json(tweet);
-            });
+    try {
+      const response = await Nlu.analyze({
+        html: req.body.content,
+        features: {
+          emotion: {}
         }
-      })
-      .catch(err => {
-        console.log("error:", err);
       });
+      const emotions = response.result.emotion.document.emotion;
+      const { sadness, joy, fear, anger } = emotions;
+      const scores = [sadness, joy, fear, anger];
+      for (let i = 0; i < 4; i++) {
+        if (scores[i] > emotion.score) {
+          emotion.score = scores[i];
+          emotion.emotion = tags[i];
+          req.body.emotion = emotion;
+        }
+      }
+      const tweet = await Tweet.create(req.body);
+      req.io.emit("tweet", tweet);
+      return res.status(200).json(tweet);
+    } catch (error) {
+      return res.json({
+        message: "We can't store your tweet, try again typing inglish"
+      })
+    }
   }
 };
