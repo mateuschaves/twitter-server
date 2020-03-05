@@ -19,7 +19,7 @@ const port = process.env.PORT || 5000;
 
 mongoose.connect(
   `mongodb+srv://mathchaves:${
-    process.env.MONGODB_PASSWORD
+  process.env.MONGODB_PASSWORD
   }@cluster0-wlooi.mongodb.net/test?retryWrites=true&w=majority`,
   { useNewUrlParser: true }
 );
