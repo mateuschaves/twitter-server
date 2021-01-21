@@ -14,7 +14,7 @@
     "express": "^4.16.4",
     "ibm-watson": "^5.4.0",
     "mongoose": "^5.7.5",
-    "socket.io": "^2.1.1"
+    "socket.io": "^2.4.0"
   },
   "devDependencies": {
     "nodemon": "^1.18.6"
